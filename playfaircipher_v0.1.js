@@ -1,6 +1,6 @@
 /*Playfair Cipher using a 6x6 grid to support numbers*/
 //Get input and passkey
-let input = 'hdvoeytpdcdiwabdotlbvaroljcpledlskljyoq1';
+let input = 'This will be the secret message you wish to encrypt!';
 let passkey = 'old tavern';
 let output = '';
 
