@@ -3,7 +3,6 @@
 let input = 'pnfnbogfuswdpgalrbeaon';
 let passkey = 'old tavern';
 const gridChars = 'abcdefghijklmnopqrstuvwxyz0123465789';
-let output ='';
 
 //Removes duplicate characters from string.
 const removeDuplicateCharacters = (string) => {
@@ -38,9 +37,27 @@ const noDoubleChars = (string) => {
     }
 };
 
+const chunk = (array, size) => {
+    let newArr = [];
+    if (size === undefined) {
+      size = 1;
+    }
+    for (let i = 0; i < array.length; i += size) {
+      let subArray = [];
+      for (j = 0; j < size; j++) {
+        if (array[i+j] === undefined) {
+          break;
+        } else subArray.push(array[i+j]);
+      }
+    newArr.push(subArray);
+    }
+    return newArr; 
+  };
+
 
 const encrypt = (plainText, keyPhrase) => {
 
+    let output = '';
     // Clean input
     plainText = noDoubleChars(plainText);
     plainText = stringCleaner(plainText);
@@ -50,11 +67,8 @@ const encrypt = (plainText, keyPhrase) => {
     };
 
     //Group characters into pairs for encoding
-    let inputArray = [];
-    for (let i = 0; i < plainText.length; i += 2) {
-        let subArray = [plainText[i], plainText[i + 1]];
-        inputArray.push(subArray);
-    };
+    let inputArray = chunk(plainText.split(''), 2);
+  
 
 //Clean passkey and generate characters for grid
     keyPhrase = stringCleaner(keyPhrase);
@@ -62,12 +76,8 @@ const encrypt = (plainText, keyPhrase) => {
     keyPhrase = removeDuplicateCharacters(keyPhrase);
 
 //Generates playfair grid
-    let playfairArray = [];
-        for (let i = 0; i < keyPhrase.length; i += 6) {
-            let subArray = [keyPhrase[i], keyPhrase[i + 1], keyPhrase[i + 2], keyPhrase[i + 3], keyPhrase[i + 4], keyPhrase[i + 5]];
-            playfairArray.push(subArray);
-        }
-
+    let playfairArray = chunk(keyPhrase.split(''), 6);
+    
 // this iterates through the playfairArray to set the playfair coordinates of each character in each input subarray
     const getCoord = (char) => {
         let row;
@@ -123,32 +133,26 @@ const encrypt = (plainText, keyPhrase) => {
 //decrypt function will decrypt any message encrypted with same rules as encrypt function
 const decrypt = (plainText, keyPhrase) => {
 
-    // Clean input (double chars allowed now)
+    let output = '';
+    // Clean input (double chars allowed now, because a properly encrypted message will not result in them being paired together)
     plainText = stringCleaner(plainText);
     /*Cipher divides the input into pairs, so will not work with a string of odd number length 
     (all previously encrypted messages should be even numbered length already)*/
     if (plainText.length % 2 != 0) {
-        plainText += 'z';
+        return `ERROR! Properly encoded messages should all have an even number of characters.`
     };
 
     //Group characters into pairs
-    let inputArray = [];
-    for (let i = 0; i < plainText.length; i += 2) {
-        let subArray = [plainText[i], plainText[i + 1]];
-        inputArray.push(subArray);
-    };
-
+    let inputArray = chunk(plainText.split(''), 2);
+    
 //Clean passkey and generate characters for grid
     keyPhrase = stringCleaner(keyPhrase);
     keyPhrase = keyPhrase += gridChars;
     keyPhrase = removeDuplicateCharacters(keyPhrase);
 
 //Generates playfair grid
-    let playfairArray = [];
-        for (let i = 0; i < keyPhrase.length; i += 6) {
-            let subArray = [keyPhrase[i + 5], keyPhrase[i + 4], keyPhrase[i + 3], keyPhrase[i + 2], keyPhrase[i + 1], keyPhrase[i]];
-            playfairArray.unshift(subArray);
-        }
+    let playfairArray = chunk(keyPhrase.split('').reverse(), 6);
+    
 
 // this iterates through the playfairArray to set the playfair coordinates of each character in each input subarray
     const getCoord = (char) => {
@@ -201,6 +205,5 @@ const decrypt = (plainText, keyPhrase) => {
 };
 
 
-//encrypt(input, passkey);
-decrypt(input, passkey);
-console.log(output);
+//console.log(encrypt(input, passkey));
+console.log(decrypt(input, passkey));
