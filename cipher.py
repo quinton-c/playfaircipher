@@ -55,9 +55,8 @@ class Data:   #holds and generates data
 
 class Grid: #builds grid and provides grid services
 
-    alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
-
     def __init__(self, key):
+        self.alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
         self.chars = self.unduplicator(self.string_cleaner(key) + self.alphabet)
 
     def unduplicator(self, txt): #unduplicates letters for the grid text
