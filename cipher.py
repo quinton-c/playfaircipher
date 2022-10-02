@@ -57,14 +57,14 @@ class Grid: #builds grid and provides grid services
 
     def __init__(self, key):
         self.alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789'
-        self.chars = self.unduplicator(self.string_cleaner(key) + self.alphabet)
+        self.cleankey = self.string_cleaner(key)
+        self.rawgrid = self.cleankey + self.alphabet
+        self.chars = self.unduplicator(self.rawgrid)
 
     def unduplicator(self, txt): #unduplicates letters for the grid text
         lst = list(txt)
-        for i in reversed(range(len(lst))):
-            if lst[i] in lst[0:i-1] and i != 0:
-                del lst[i]
-        return ''.join(lst)
+        cleangrid = [lst[i] if lst[i] not in lst[:i] else '' for i in range(len(lst))]
+        return ''.join(cleangrid)
 
     def string_cleaner(self, string): #removes unacceptable characters and makes all letters lowercase
         accepted_chars = list('abcdefghijklmnopqrstuvwxyz0123456789')
@@ -166,7 +166,7 @@ class Grid: #builds grid and provides grid services
         return new_coords
 
     def __repr__(self):
-        return "|" + "|".join(list(self.chars[0:5])) + '|\n|' + "|".join(list(self.chars[6:11])) + '|\n|' + "|".join(list(self.chars[12:17])) + '|\n|' + "|".join(list(self.chars[18:23])) + '|\n|' + "|".join(list(self.chars[24:29])) + '|\n|' + "|".join(list(self.chars[30:35])) + "|"
+        return "|" + "|".join(list(self.chars[0:6])) + '|\n|' + "|".join(list(self.chars[6:12])) + '|\n|' + "|".join(list(self.chars[12:18])) + '|\n|' + "|".join(list(self.chars[18:24])) + '|\n|' + "|".join(list(self.chars[24:30])) + '|\n|' + "|".join(list(self.chars[30:36])) + "|"
 
 
 
@@ -202,7 +202,7 @@ What text would you like to encode or decode?
 
     coords = data.get_coords(grd)
    
-    #print(grd) <-- can print the grid for debuggin purposes (not printed by default)
+    print(grd) #<-- can print the grid for debuggin purposes (not printed by default)
 
     print('\nWould you like to encode or decode? (Please enter encode or decode exactly)\n')
 
@@ -223,4 +223,4 @@ What text would you like to encode or decode?
     new_letters = [coord['Letter'] for coord in new_coords]
     
     output = ''.join(new_letters)
-    print('\n' * 2  + output + '\n')
+    print(f'\nYour {direction}d message is: \n{output} \n')
